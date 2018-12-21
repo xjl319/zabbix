@@ -1,0 +1,10 @@
+version: '2'
+services:
+  zabbixproxy:
+    image: zabbix/zabbix-proxy-sqlite3:centos-3.0.24 
+    environment:
+      ZBX_HOSTNAME: zabbix_proxy 
+      ZBX_SERVER_HOST: 192.168.3.31 
+    restart: always
+    ports:
+      - "10051:10051"

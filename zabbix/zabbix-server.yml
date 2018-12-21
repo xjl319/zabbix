@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+
+  db:
+    image: mysql:5.7.24 
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - $PWD/mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '1asd@234qweR'
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+
+  zabbixserver:
+    image: zabbix/zabbix-server-mysql:centos-3.0.24
+    environment:
+      DB_SERVER_HOST: db
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+      MYSQL_DATABASE: zabbix
+    restart: always
+    ports:
+      - "10057:10051"
+    links:
+      - db
+  zabbixweb:
+    image: zabbix/zabbix-web-nginx-mysql:centos-3.0.24
+    environment:
+      ZBX_SERVER_HOST: zabbixserver
+      DB_SERVER_HOST: db
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+      MYSQL_DATABASE: zabbix
+      PHP_TZ: Asia/Shanghai
+      ZBX_SERVER_NAME: zoesoft
+    restart: always
+    ports:
+      - "8888:80"
+    links:
+      - db
+      - zabbixserver
